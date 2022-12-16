@@ -9,7 +9,7 @@ Define REST API and track the requests.
 Custom domain is not configured for now. It is recommended to use a variable to point API root.
 
 ```
-API_ROOT=https://lmzaqh61t1.execute-api.ap-northeast-1.amazonaws.com/prod/api
+API_ROOT=https://your-api-gateway-domain.execute-api.ap-northeast-1.amazonaws.com/prod/api
 ```
 
 Add an endpoint.

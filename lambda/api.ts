@@ -75,10 +75,15 @@ const handler: lambda.APIGatewayProxyHandler = async (
         message: e.message,
       });
     }
+
     console.log("unhandled", e);
+    if (e instanceof Error) {
+      return sendJson(500, {
+        message: e.message,
+      });
+    }
     return sendJson(500, {
-      // message: "unexpected error",
-      message: e.message,
+      message: "unexpected error",
     });
   }
 };
@@ -86,16 +91,21 @@ function decode<T>(decoder: Decoder<T>, value: unknown): T {
   try {
     return decoder.run(value);
   } catch (e) {
-    throw new StatusError(400, e.message);
+    if (e instanceof Error) {
+      throw new StatusError(400, e.message);
+    }
+    throw new StatusError(400, "unexpected error");
   }
 }
 function trimPath(path: string): string {
   return path.replace(/(^\/api)/, "");
 }
-function getNormalizedHeaders(headers: { [name: string]: string }) {
+function getNormalizedHeaders(headers: { [name: string]: string | undefined }) {
   const ret: { [name: string]: string } = {};
-  for (const key of Object.keys(headers)) {
-    ret[key.toLowerCase()] = headers[key];
+  for (const [key, value] of Object.entries(headers)) {
+    if (value) {
+      ret[key.toLowerCase()] = value;
+    }
   }
   return ret;
 }
